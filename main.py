@@ -5,6 +5,7 @@ from utils import limpar_terminal
 
 scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
 
+
 def main():
     limpar_terminal()
     playlist_link = input("De qual playlist deseja obter informações?\n~> ").strip()
@@ -20,24 +21,37 @@ def main():
     credentials = flow.run_local_server()
     youtube = googleapiclient.discovery.build(api_service_name, api_version, credentials=credentials)
     
-    request = youtube.playlistItems().list(
-        part = "contentDetails",
-        maxResults = 50,
-        playlistId = playlist_id
-    )
-    response = request.execute()
+    video_ids = []
+    videos_info = {}
+    next_page_token = None
     
-    videos = response.get("items", [])
-    videos_id = [video["contentDetails"]["videoId"] for video in videos]
-    
-    request = youtube.videos().list(
-        part = "snippet, statistics",
-        id = ",".join(videos_id)
-    )
-    response = request.execute()
+    while True:
+        request = youtube.playlistItems().list(
+            part = "contentDetails",
+            maxResults = 50,
+            playlistId = playlist_id,
+            pageToken=next_page_token
+        )
+        response = request.execute()
+        video_ids.extend([video["contentDetails"]["videoId"] for video in response.get("items", [])])
+        
+        next_page_token = response.get("nextPageToken")
+        if not next_page_token:
+            break
 
-    videos = response["items"]
-    videos_info = {video["snippet"]["title"]: video["statistics"]["viewCount"] for video in videos}
+    for i in range(0, len(video_ids), 50):
+        batch_ids = video_ids[i:i + 50]
+        
+        request = youtube.videos().list(
+            part = "snippet, statistics",
+            id = ",".join(batch_ids)
+        )
+        response = request.execute()
+        
+        for video in response.get("items", []):
+            title = video["snippet"]["title"]
+            views = video["statistics"]["viewCount"]
+            videos_info[title] = views
     
     limpar_terminal()
     print("========================= Relatório Completo da Playlist =========================")
