@@ -1,0 +1,6 @@
+__pycache__/
+.venv/
+.upm/
+.replit
+.replit.lock
+.secrets.json
