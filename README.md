@@ -30,7 +30,7 @@ Este projeto permite obter um relatório completo com **visualizações de todos
 
 ### 🚀 Como Rodar o Projeto
 
-> ⚠️ **Você precisará de uma credencial da API do YouTube (client_secrets.json)**. Veja abaixo como obter a sua.
+> ⚠️ **Você precisará de uma credencial da API do YouTube (secrets.json)**. Veja abaixo como obter a sua.
 
 1. **Clone este repositório:**
 
@@ -42,9 +42,9 @@ Este projeto permite obter um relatório completo com **visualizações de todos
 2. **Crie um ambiente virtual e ative:**
 
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # Linux/macOS
-   venv\Scripts\activate     # Windows
+   python -m venv .venv
+   source .venv/bin/activate  # Linux/macOS
+   .venv\Scripts\activate     # Windows
    ```
 
 3. **Instale as dependências:**
